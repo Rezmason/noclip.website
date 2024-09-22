@@ -91,6 +91,7 @@ import * as Scenes_HalfLife from './GoldSrc/Scenes_HalfLife.js';
 import * as Scenes_SuperMonkeyBall from './SuperMonkeyBall/Scenes_SuperMonkeyBall.js';
 import * as Scenes_DragonQuest8 from './DragonQuest8/scenes.js';
 import * as Scenes_Morrowind from './Morrowind/Scenes.js';
+import * as Scenes_PlusForXP from './PlusForXP/scenes.js';
 
 import { DroppedFileSceneDesc, traverseFileSystemDataTransfer } from './Scenes_FileDrops.js';
 
@@ -183,6 +184,7 @@ const sceneGroups: (string | SceneGroup)[] = [
     Scenes_Portal2.sceneGroup,
     Scenes_WorldOfWarcraft.vanillaSceneGroup,
     "Experimental",
+    Scenes_PlusForXP.sceneGroup,
     Scenes_DonkeyKong64.sceneGroup,
     Scenes_DonkeyKongCountryReturns.sceneGroup,
     Scenes_Elebits.sceneGroup,
