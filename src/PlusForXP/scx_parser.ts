@@ -1,3 +1,4 @@
+import { Geometry, PlusSceneData } from "./data_types.js";
 import { SCXToken, scxTokens, closeBrace, openBrace } from "./scx_tokens.js"
 
 const littleEndian = (() => {
@@ -53,77 +54,7 @@ const pluralTypeNames: Record<string, string> = {
 	"uvcoords": "uvcoords",
 	"vertexpoints": "vertexpoints",
 	"keys": "keys",
-};
-
-type PlusNode = {
-	name: string
-};
-
-type Shader = PlusNode & {
-	id: number,
-	ambient: number[],
-	diffuse: number[],
-	specular: number[],
-	opacity: number,
-	luminance: number,
-	texture: string,
-	blend: number
-};
-
-type Global = {
-	animinterval: number[],
-	framerate: number,
-	ambient: number[]
-};
-
-type Camera = PlusNode & {
-	
-};
-
-type Light = PlusNode & {
-	type: "spot" | "directional" | "point",
-	pos: number[],
-	dir: number[],
-	umbra: number,
-	penumbra: number,
-	attenstart: number,
-	attenend: number,
-	color: number[],
-	intensity: number,
-	off: boolean
-};
-
-type Object = PlusNode & {
-	transforms: Transform[],
-	meshes: Mesh[]
-};
-
-type Transform = {
-	trans: number[],
-	rot: number[],
-	scale: number[]
-};
-
-type Mesh = {
-	geometries: Geometry[],
-	vertexcount: number,
-	normals: number[],
-	uvcoords: number[],
-	vertexpoints: number[]
-}
-
-type Geometry = { 
-	shader: number, 
-	smoothingGroup: number, 
-	indices: number[] 
-}
-
-export type PlusSceneData = {
-	shaders: Shader[]
-	scenes: Global[]
-	cameras: Camera[]
-	lights: Light[]
-	objects: Object[]
+	"anim": "anims"
 };
 
 export const parse = async (scxData: Uint8Array) : Promise<PlusSceneData> => {
@@ -312,6 +243,14 @@ class Writer {
 				o.keys = keys;
 			}
 		});
-		return o;
+		const sceneData: PlusSceneData = {
+			shaders: [],
+			scenes: [],
+			cameras: [],
+			lights: [],
+			objects: [],
+			...o
+		};
+		return sceneData;
 	};
 }

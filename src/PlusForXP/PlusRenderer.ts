@@ -1,12 +1,37 @@
 import * as Viewer from '../viewer.js';
 import { GfxDevice } from "../gfx/platform/GfxPlatform.js";
 import { TextureHolder } from "../TextureHolder.js";
-import { PlusSceneData } from "./scx_parser.js";
+import { PlusSceneData } from './data_types.js';
+import { PlusTexture } from './util.js';
+
+type PlusContext = {
+  basePath: string,
+  sceneData: PlusSceneData[],
+  textures: PlusTexture[]
+};
 
 export default class PlusRenderer implements Viewer.SceneGfx {
+
+  texturesByPath:Record<string, PlusTexture>;
   
-  constructor(device: GfxDevice, basePath: string, sceneData: PlusSceneData[], public textureHolder: TextureHolder<any>) {
+  constructor(device: GfxDevice, context: PlusContext, public textureHolder: TextureHolder<any>) {
+    this.texturesByPath = Object.fromEntries(
+      context.textures.map(texture => ([texture.path, texture]))
+    );
+    for (const data of context.sceneData) {
+      this.buildScene(data);
+    }
+  }
+
+  private buildScene(data: PlusSceneData) {
     
+    for (const shader of data.shaders) {}
+    for (const global of data.scenes) {}
+    for (const camera of data.cameras) {}
+    for (const light of data.lights) {}
+    for (const object of data.objects) {}
+
+    // TODO: parent the nodes
   }
 
   /*

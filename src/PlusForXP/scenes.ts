@@ -2,10 +2,11 @@ import { GfxDevice } from "../gfx/platform/GfxPlatform.js";
 import { SceneContext, SceneDesc, SceneGroup } from "../SceneBase.js";
 import { SceneGfx } from "../viewer.js";
 
-import { PlusSceneData, parse as parseSCX } from './scx_parser.js'
+import { parse as parseSCX } from './scx_parser.js'
 import { dataSets } from "./data_sets.js"
-import { makeTextureHolder } from "./util.js";
+import { fetchTextures, makeTextureHolder } from "./util.js";
 import PlusRenderer from './PlusRenderer.js';
+import { PlusSceneData } from "./data_types.js";
 class PlusForXPSceneDesc implements SceneDesc {
   
   constructor(private screensaverID: string, private variety: string, public name: string) {}
@@ -24,8 +25,9 @@ class PlusForXPSceneDesc implements SceneDesc {
           .then(({arrayBuffer}) => parseSCX(new Uint8Array(arrayBuffer)))
         )
     );
-    const textureHolder = await makeTextureHolder(sceneContext.dataFetcher, basePath, sceneData);
-    return new PlusRenderer(device, basePath, sceneData, textureHolder);
+    const textures = await fetchTextures(sceneContext.dataFetcher, basePath, sceneData);
+    const textureHolder = makeTextureHolder(textures);
+    return new PlusRenderer(device, {basePath, sceneData, textures}, textureHolder);
   }
 }
 
