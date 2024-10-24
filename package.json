@@ -31,8 +31,10 @@
   "dependencies": {
     "crc-32": "^1.2.2",
     "gl-matrix": "^3.4.3",
+    "jpeg-js": "^0.4.4",
     "librw": "^0.4.0",
-    "reflect-metadata": "^0.1.14"
+    "reflect-metadata": "^0.1.14",
+    "tiff": "^6.1.1"
   },
   "scripts": {
     "start": "webpack serve --config webpack.dev.cjs",
