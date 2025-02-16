@@ -19,7 +19,14 @@ export type Mesh = {
   vertexBufferDescriptors: GfxVertexBufferDescriptor[],
   indexBufferDescriptor: GfxIndexBufferDescriptor,
   indexCount: number,
-  material: Material
+  material: Material,
+
+  vertexcount: number,
+  positions: number[],
+  normals: number[],
+  bakedColors: number[],
+  texCoords: number[],
+  indices: number[]
 };
 
 export type Transform = {

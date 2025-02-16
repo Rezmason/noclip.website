@@ -172,8 +172,9 @@ export const sceneGroup = {
           name: variant.name,
           createScene: async (device: GfxDevice, sceneContext: SceneContext): Promise<SceneGfx> => {
             const screensaver = screensavers[screensaverID];
+            const screensaverName = screensaver.name;
             const variant = screensaver.variants[variantID];
-            const { envMapRotation, cameras } = variant;
+            const { envMapRotation, cameras, name: variantName } = variant;
             const basePath = `PlusForXP/${screensaver.basePath}`
             const scenes: Record<string, SCX.Scene> = Object.fromEntries(await Promise.all(
               variant.scenePaths
@@ -194,7 +195,7 @@ export const sceneGroup = {
               fetchTextures(sceneContext.dataFetcher, basePath, variant.envTexturePaths)
             ]);
             const textureHolder = makeTextureHolder([...textures, ...envTextures]);
-            return new Renderer(device, {basePath, scenes, textures, envTextures, envMapRotation, cameras}, textureHolder);
+            return new Renderer(device, {screensaverName, variantName, scenes, textures, envTextures, envMapRotation, cameras}, textureHolder);
           }
         }))
     ]))

@@ -36,10 +36,12 @@ import { SceneGfx, ViewerRenderInput } from "../viewer.js";
 import Plus4XPProgram from "./program.js";
 import { buildNodeAnimations, ChannelAnimation } from "./animation.js";
 import * as UI from '../ui.js';
+import exportGLTF from "./exportGLTF.js";
 // import sphereScene from "./sphere.js";
 
 type Context = {
-  basePath: string,
+  screensaverName: string,
+  variantName: string,
   scenes: Record<string, SCX.Scene>,
   textures: Texture[],
   envTextures: Texture[],
@@ -57,7 +59,7 @@ type UnbakedMesh = {
 };
 
 export default class Renderer implements SceneGfx {
-
+  private gltfName: string;
   private texturesByPath:Record<string, Texture>;
   private envGfxTexture:GfxTexture | null;
   private envMapMatrix = mat4.create();
@@ -87,7 +89,7 @@ export default class Renderer implements SceneGfx {
   private cameraSelect: UI.SingleSelect;
   
   constructor(device: GfxDevice, context: Context, public textureHolder: TextureHolder<any>) {
-
+    this.gltfName = `${context.screensaverName}_${context.variantName}`;
     this.megaStateFlags = {
       ...defaultMegaState,
       cullMode: GfxCullMode.Back
@@ -182,6 +184,9 @@ export default class Renderer implements SceneGfx {
         node.worldTransform, 
         transformedLightsBySceneName.get(sceneName)!
       );
+      for (const mesh of node.meshes) {
+        mesh.bakedColors = [...diffuseColors];
+      }
       device.uploadBufferData(diffuseColorBuffer, 0, new Uint8Array(diffuseColors.buffer));
     }
     
@@ -316,8 +321,6 @@ export default class Renderer implements SceneGfx {
           continue;
         }
 
-        const a = align;
-
         const diffuseColorBuffer = device.createBuffer(
           mesh.vertexcount * 4, 
           GfxBufferUsage.Vertex, 
@@ -375,7 +378,10 @@ export default class Renderer implements SceneGfx {
           vertexBufferDescriptors,
           indexBufferDescriptor,
           indexCount: mesh.indices.length,
-          material
+          material,
+
+          ...mesh,
+          bakedColors: []
         });
       }
       
@@ -405,7 +411,21 @@ export default class Renderer implements SceneGfx {
     this.cameraSelect.selectItem(1); // TODO: persist through serialize/deserialize
     cameraPanel.contents.appendChild(this.cameraSelect.elem);
     
-    return [cameraPanel];
+    const exportPanel = new UI.Panel();
+    exportPanel.customHeaderBackgroundColor = UI.COOL_BLUE_COLOR;
+    exportPanel.setTitle(UI.RENDER_HACKS_ICON, 'Export');
+    const exportButton = new UI.Checkbox("Export", false);
+    exportButton.onchanged = () => {
+      exportGLTF(
+        this.gltfName,
+        this.rootNode, 
+        this.materialsByName,
+        this.texturesByPath
+      );
+    };
+    exportPanel.contents.appendChild(exportButton.elem);
+
+    return [cameraPanel, exportPanel];
   }
 
   /*
